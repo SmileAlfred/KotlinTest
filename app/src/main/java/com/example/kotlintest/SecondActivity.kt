@@ -25,7 +25,7 @@ class SecondActivity : AppCompatActivity() {
         //7. 使用 . 即可调用其控件，要注意其 id 名 一一对应
 
         binding.imageButton.setOnClickListener(View.OnClickListener {
-            Toast.makeText(this, "尝试使用 ViewBinding", Toast.LENGTH_SHORT).show()
+            binding.editTextTextPersonName.setText("尝试使用 ViewBinding~")
         })
     }
 }
