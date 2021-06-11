@@ -1,14 +1,11 @@
 package com.example.kotlintest
 
-import android.media.tv.TvView
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
-import android.widget.Toast
 import com.example.kotlintest.databinding.ActivityCoroutineTestBinding
 import kotlinx.coroutines.*
-import kotlin.concurrent.thread
 
 /**
  * 协程使用；1。runBlocking:T；此时阻塞，但可以操作UI
@@ -17,6 +14,10 @@ import kotlin.concurrent.thread
  *
  * 2。调度器的使用
  * 协程可以在一个线程中挂起，在另外一个线程继续执行
+ * 参考文章：https://www.jianshu.com/p/b88dda16e0e8
+ *
+ * 3。关键字：suspend、async
+ * 参考文章：https://www.jianshu.com/p/6e6835573a9c
  */
 public class CoroutineTestActivity1 : AppCompatActivity(), View.OnClickListener {
 
@@ -29,6 +30,8 @@ public class CoroutineTestActivity1 : AppCompatActivity(), View.OnClickListener 
     val testDispatcher: String = TAG + " testDispatcher()"
     val testUnconfinedDis: String = TAG + " testUnconfinedDis()"
     val testSwitchCorInThr: String = TAG + " testSwitchCorInThr()"
+    val testSuspend: String = TAG + " testSuspend()"
+    val testAsync: String = TAG + " testAsync()"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,18 +39,20 @@ public class CoroutineTestActivity1 : AppCompatActivity(), View.OnClickListener 
         _binding = ActivityCoroutineTestBinding.inflate(getLayoutInflater())
         setContentView(binding.root)
 
-        tv_showinfo = binding.tvCoreoutline
+        tv_showinfo = binding.tvCoreoutine
         tv_showinfo?.append("\nbingding 到了；这就开始～")
 
-        binding.btnCoroutline1.setOnClickListener(this)
+        binding.btnCoroutine1.setOnClickListener(this)
         binding.btnDispatch1.setOnClickListener(this)
         binding.btnDispatchConfined.setOnClickListener(this)
         binding.btnCorSwitchthread.setOnClickListener(this)
+        binding.btnTestSuspend.setOnClickListener(this)
+        binding.btnTestAsync.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
         when (v) {
-            binding.btnCoroutline1 -> {
+            binding.btnCoroutine1 -> {
                 tv_showinfo?.append("\n--> 主线程ID：" + mainLooper.thread.id)
                 test()
                 tv_showinfo?.append("\n--> 协程执行结束")
@@ -60,8 +65,83 @@ public class CoroutineTestActivity1 : AppCompatActivity(), View.OnClickListener 
 
             //测试 线程间切换协程
             binding.btnCorSwitchthread -> testSwitchCorInThr()
+
+            //测试 刮起协程体
+            binding.btnTestSuspend -> testSuspend()
+
+            //测试 关键字async
+            binding.btnTestAsync->testAsync()
         }
     }
+
+    /**
+     * 测试 关键字 Async
+     * async 跟 launch的用法基本一样，
+     * 区别在于：async的返回值是 Deferred，将最后一个封装成了该对象。
+     * async可以支持并发，此时一般都跟await一起使用。
+     * async是不阻塞线程的,也就是说getResult1和getResult2是同时进行的，所以获取到result的时间是4s，而不是7s。
+     */
+    private fun testAsync() {
+        GlobalScope.launch {
+            val res1 = GlobalScope.async {
+                getRes1()
+            }
+            val res2 = GlobalScope.async {
+                getRes2()
+            }
+            val res =res1.await() +res2.await()
+            println(testAsync +"res = " + res)
+        }
+
+    }
+
+    private suspend fun getRes1():Int {
+        delay(3000)
+        return 1
+
+    }
+
+    private suspend fun getRes2() :Int{
+        delay(4000)
+        return 2
+    }
+
+    /**
+     * 测试 挂起协程体
+     * 协程体是一个用suspend关键字修饰的一个无参，无返回值的函数类型。
+     * 被suspend修饰的函数称为挂起函数,与之对应的是关键字resume（恢复），
+     * 注意：挂起函数只能在协程中和其他挂起函数中调用，不能在其他地方使用。
+     * suspend函数会将整个协程挂起，而不仅仅是这个suspend函数，也就是说一个协程中有多个挂起函数时，它们是顺序执行的。
+     * getToken方法将协程挂起，协程中其后面的代码永远不会执行，只有等到getToken挂起结束恢复后才会执行。
+     * 同时协程挂起后不会阻塞其他线程的执行。
+     * 另外，如果你要 delay 那么必须要使用 suspend
+     */
+    private fun testSuspend() {
+        GlobalScope.launch {
+            val token = getToken()
+            val userInfo = getUserInfo(token)
+            setUserInfo(userInfo)
+        }
+        repeat(8) {
+            println(testSuspend + "主线程执行：" + it)
+        }
+    }
+
+    private fun setUserInfo(userInfo: String) {
+        println(testSuspend + userInfo)
+    }
+
+    private suspend fun getUserInfo(token: String): String {
+        delay(2000)
+        return token + " - userinfo"
+
+    }
+
+    private suspend fun getToken(): String {
+        delay(2000)
+        return "getToken 返回的 token"
+    }
+
 
     /**
      * 测试 线程间切换协程
@@ -73,12 +153,12 @@ public class CoroutineTestActivity1 : AppCompatActivity(), View.OnClickListener 
      */
     private fun testSwitchCorInThr() {
         newSingleThreadContext("cxt1").use { cxt1 ->
-            newSingleThreadContext("cxt2").use {cxt2->
+            newSingleThreadContext("cxt2").use { cxt2 ->
                 //在 cxt1 中执行协程
                 runBlocking(cxt1) {
-                    println(testSwitchCorInThr +"\t在 cxt1 输出：线程 = " + Thread.currentThread().name)
-                    withContext(cxt2){
-                        println(testSwitchCorInThr +"\t切换到 cxt2 输出：线程 = " + Thread.currentThread().name)
+                    println(testSwitchCorInThr + "\t在 cxt1 输出：线程 = " + Thread.currentThread().name)
+                    withContext(cxt2) {
+                        println(testSwitchCorInThr + "\t切换到 cxt2 输出：线程 = " + Thread.currentThread().name)
                     }
                 }
 

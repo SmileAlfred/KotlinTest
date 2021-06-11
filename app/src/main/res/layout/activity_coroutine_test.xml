@@ -8,6 +8,36 @@
     tools:context=".CoroutineTestActivity1">
 
     <Button
+        android:id="@+id/btn_test_async"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="26dp"
+        android:text="关键字：Async"
+        app:layout_constraintBottom_toTopOf="@+id/tv_coreoutine"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_cor_switchthread"
+        app:layout_constraintVertical_bias="0.173" />
+
+    <Button
+        android:id="@+id/btn_test_suspend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="26dp"
+        android:text="挂起协程：suspend"
+        app:layout_constraintBottom_toTopOf="@+id/tv_coreoutine"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.924"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_dispatch_confined"
+        app:layout_constraintVertical_bias="0.115" />
+
+    <Button
         android:id="@+id/btn_cor_switchthread"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -17,7 +47,7 @@
         android:layout_marginRight="267dp"
         android:layout_marginBottom="26dp"
         android:text="线程中切换协程"
-        app:layout_constraintBottom_toTopOf="@+id/tv_coreoutline"
+        app:layout_constraintBottom_toTopOf="@+id/tv_coreoutine"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -25,15 +55,13 @@
         app:layout_constraintVertical_bias="0.115" />
 
     <TextView
-        android:id="@+id/tv_coreoutline"
+        android:id="@+id/tv_coreoutine"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="167dp"
         android:layout_marginEnd="325dp"
         android:layout_marginRight="325dp"
-        android:layout_marginBottom="320dp"
         android:background="#FF0000"
         android:text="测试协程"
         android:textColor="#FFFFFF"
@@ -44,10 +72,10 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.852" />
+        app:layout_constraintVertical_bias="0.637" />
 
     <Button
-        android:id="@+id/btn_coroutline1"
+        android:id="@+id/btn_coroutine1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
@@ -57,7 +85,7 @@
         android:layout_marginRight="267dp"
         android:layout_marginBottom="26dp"
         android:text="开始测试线程"
-        app:layout_constraintBottom_toTopOf="@+id/tv_coreoutline"
+        app:layout_constraintBottom_toTopOf="@+id/tv_coreoutine"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -71,13 +99,11 @@
         android:layout_marginStart="180dp"
         android:layout_marginLeft="180dp"
         android:layout_marginTop="58dp"
-        android:layout_marginEnd="267dp"
-        android:layout_marginRight="267dp"
         android:layout_marginBottom="26dp"
         android:text="测试调度器（log）"
-        app:layout_constraintBottom_toTopOf="@+id/tv_coreoutline"
+        app:layout_constraintBottom_toTopOf="@+id/tv_coreoutine"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.15"
+        app:layout_constraintHorizontal_bias="0.737"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
@@ -93,7 +119,7 @@
         android:layout_marginRight="267dp"
         android:layout_marginBottom="26dp"
         android:text="测试Unconfined和confined 调度器"
-        app:layout_constraintBottom_toTopOf="@+id/tv_coreoutline"
+        app:layout_constraintBottom_toTopOf="@+id/tv_coreoutine"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"

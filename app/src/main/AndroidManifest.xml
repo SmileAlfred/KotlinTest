@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.KotlinTest">
-        <activity android:name=".CoroutineTestActivity2"/>
+        <activity android:name=".mrxjava.CorAsRxJavaActivity"></activity>
+        <activity android:name=".CoroutineTestActivity2" />
         <activity android:name=".CoroutineTestActivity1" />
         <activity android:name=".ViewBindTestActivity" />
         <activity android:name=".MainActivity">

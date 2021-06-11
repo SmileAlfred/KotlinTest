@@ -7,6 +7,8 @@ import android.view.View
 import androidx.core.app.AppLaunchChecker
 import com.example.kotlintest.databinding.ActivityCoroutineTest2Binding
 import kotlinx.coroutines.*
+import java.lang.reflect.Method
+import kotlin.concurrent.thread
 
 /**
  * 协程使用；2.launch:Job；此时 不 阻塞，但 不 可以操作UI
@@ -23,6 +25,7 @@ class CoroutineTestActivity2 : AppCompatActivity(), View.OnClickListener,
     val testChildCor: String = TAG + " testChildCor()\t"
     val renameCor: String = TAG + " renameCor()\t"
     val testCorScope: String = TAG + " testCorScope()\t"
+    val testThreadLocalData: String = TAG + " testThreadLocalData()\t"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,17 +35,18 @@ class CoroutineTestActivity2 : AppCompatActivity(), View.OnClickListener,
 
         binding.tvCoroutlinJob.append("\nbinding上了～")
 
-        binding.btnCoroutlineJob.setOnClickListener(this)
+        binding.btnCoroutineJob.setOnClickListener(this)
         binding.btnGetJob.setOnClickListener(this)
         binding.btnChildCor.setOnClickListener(this)
         binding.btnRename.setOnClickListener(this)
         binding.btnCorScope.setOnClickListener(this)
+        binding.btnThreadlocalsData.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
         when (v) {
             //测试 协程的使用，Job
-            binding.btnCoroutlineJob -> testJob()
+            binding.btnCoroutineJob -> testJob()
             //测试 获取 Job
             binding.btnGetJob -> getJob()
             //测试 子协程
@@ -51,8 +55,29 @@ class CoroutineTestActivity2 : AppCompatActivity(), View.OnClickListener,
             binding.btnRename -> renameCor()
             //测试 协程作用域
             binding.btnCorScope -> testCorScope()
+            //测试 线程局部数据
+            binding.btnThreadlocalsData -> testThreadLocalData()
         }
 
+    }
+
+    /**
+     * 线程局部数据（Thread-local data）
+     * 有时候需要将线程的一些局部数据传递到协程中，但是协程没有绑定任何线程，
+     * 所以可以通过ThreadLocal来实现，ThreadLocal的扩展函数asContextElement 可以解决这个问题
+     */
+    val threadLocal = ThreadLocal<String>()
+    private fun testThreadLocalData() {
+        threadLocal.set("this is new data")
+        runBlocking {
+            val job = launch(Dispatchers.Default + threadLocal.asContextElement(value = "launch")) {
+                println(testThreadLocalData + "start data is -> " + threadLocal.get())
+                yield()
+                println(testThreadLocalData + "stop data is -> " + threadLocal.get())
+            }
+            job.join()
+            println(testThreadLocalData + "and data is -> " + threadLocal.get())
+        }
     }
 
 
@@ -69,7 +94,7 @@ class CoroutineTestActivity2 : AppCompatActivity(), View.OnClickListener,
         repeat(10) { i ->
             launch {
                 delay((i + 1) * 2000L)
-                println(testCorScope+"这是第 " + i + " 次执行")
+                println(testCorScope + "这是第 " + i + " 次执行")
             }
         }
         finish()//模拟手动退出
