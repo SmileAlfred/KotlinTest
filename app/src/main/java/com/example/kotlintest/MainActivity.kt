@@ -7,45 +7,24 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import com.example.kotlintest.databinding.ActivityMainBinding
 
-public class MainActivity : AppCompatActivity() {
+public class MainActivity : AppCompatActivity(), View.OnClickListener {
+
+    var _binding: ActivityMainBinding? = null
+    val binding get() = _binding!!
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
-        val tv_showmsg = findViewById<TextView>(R.id.tv_showmsg);
-        val btn_test = findViewById<Button>(R.id.btn_test);
+        _binding = ActivityMainBinding.inflate(getLayoutInflater())
+        setContentView(binding.root)
 
-        btn_test.setOnClickListener(View.OnClickListener {
-
-            startActivity(Intent(this, SecondActivity::class.java))
-
-            tv_showmsg.append("测试语法！")
-            Toast.makeText(
-                this, "测试语法呢", Toast.LENGTH_SHORT
-            ).show()
-            testMethod(tv_showmsg, "\n测试 方法 的语法")
-            testArgs(tv_showmsg, btn_test, "\n测试 多参数 的定义")
-
-
-            var ageStr: String? = null
-            try {
-                val age1 = ageStr!!.toInt();
-            } catch (e: Exception) {
-                tv_showmsg.append("\n空指针异常测试一：使用 !! 如果有空指针直接抛出异常")
-            }
-            val age2 = ageStr?.toInt()
-            tv_showmsg.append("\n空指针异常测试二：使用 ? 如果有空指针直接返回 null " + age2)
-
-            val age3 = ageStr?.toInt() ?: 99
-            tv_showmsg.append("\n空指针异常测试三：使用 ? 结合 ?: 如果有空指针返回自己指定的值 " + age3)
-
-            tv_showmsg.append("\nNULL == \"" + "\" ? " + (null == ""))   //"" != NULL
-
-
-        })
-
-
+        //即使使用 binding 也一定要用本语句
+        binding.btnTestyufa?.setOnClickListener(this)
+        binding.btnViewbindnig?.setOnClickListener(this)
+        binding.btnCoroutline1?.setOnClickListener(this)
+        binding.btnCoroutline2?.setOnClickListener(this)
     }
 
 
@@ -66,6 +45,44 @@ public class MainActivity : AppCompatActivity() {
 
     fun testMethod(tv_showmsg: TextView, s: String) {
         tv_showmsg.append(s)
+    }
+
+    override fun onClick(v: View?) {
+        when (v) {
+            binding.btnTestyufa -> {
+                binding.tvShowmsg  ?.append("测试语法！")
+                Toast.makeText(
+                    this, "测试语法呢", Toast.LENGTH_SHORT
+                ).show()
+                //testMethod(tv_showmsg, "\n测试 方法 的语法") //报错
+                binding.tvShowmsg?.let { testMethod(it, "\n测试 方法 的语法") }
+
+                testArgs(binding.tvShowmsg, binding.btnTestyufa, "\n测试 多参数 的定义")
+
+
+                var ageStr: String? = null
+                try {
+                    val age1 = ageStr!!.toInt();
+                } catch (e: Exception) {
+                    binding.tvShowmsg?.append("\n空指针异常测试一：使用 !! 如果有空指针直接抛出异常")
+                }
+                val age2 = ageStr?.toInt()
+                binding.tvShowmsg?.append("\n空指针异常测试二：使用 ? 如果有空指针直接返回 null " + age2)
+
+                val age3 = ageStr?.toInt() ?: 99
+                binding.tvShowmsg?.append("\n空指针异常测试三：使用 ? 结合 ?: 如果有空指针返回自己指定的值 " + age3)
+
+                binding.tvShowmsg?.append("\nNULL == \"" + "\" ? " + (null == ""))   //"" != NULL
+            }
+
+
+            binding.btnViewbindnig -> startActivity(Intent(this, ViewBindTestActivity::class.java))
+
+            binding.btnCoroutline1 -> startActivity(Intent(this, CoroutineTestActivity1::class.java))
+
+
+            binding.btnCoroutline2 -> startActivity(Intent(this, CoroutineTestActivity2::class.java))
+        }
     }
 
 }
