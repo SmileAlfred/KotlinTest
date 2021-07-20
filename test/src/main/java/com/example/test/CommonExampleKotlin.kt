@@ -1,6 +1,8 @@
 package com.example.test
 
+import android.content.Context
 import java.io.File
+import javax.security.auth.callback.Callback
 
 class CommonExampleKotlin {
 
@@ -51,6 +53,7 @@ class CommonExampleKotlin {
     private fun isExist(): Boolean {
         return false
     }
+
     /**
      * 6) Mock系统类的静态和final方法
      */
@@ -67,12 +70,30 @@ class CommonExampleKotlin {
     private val mState = STATE_NOT_READY
 
     fun doSomethingIfStateReady(): Boolean {
-        return if (mState == STATE_READY) {
-            // DO some thing
-            true
-        } else {
-            false
+        return if (mState == STATE_READY) true else false
+    }
+
+    /**
+     * 8) Mock 接口
+     */
+    fun callInterface() {
+        val mCallBack: MyCallBack = object : MyCallBack {
+            override fun stateEntered(state: Int): Int {
+                return -1
+            }
+            override fun stateExited(state: Int): Boolean {
+                return true
+            }
+            override fun stateChanged(from: Int, to: Int): String {
+                return "c"
+            }
         }
     }
 
+    /**
+     * 9) Mock Context
+     */
+    fun callContext():String{
+        return MyApplication.getContext().getString(R.string.app_name)
+    }
 }

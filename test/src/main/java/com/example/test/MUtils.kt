@@ -1,5 +1,6 @@
 package com.example.test
 
+import android.content.Context
 import java.util.*
 
 /**
@@ -16,6 +17,11 @@ object MUtils {
     @JvmStatic
     open fun generateNewUUId(): String {
         return UUID.randomUUID().toString()
+    }
+
+    @JvmStatic
+    fun getContext():Context{
+        return MyApplication.getContext()
     }
 
 }

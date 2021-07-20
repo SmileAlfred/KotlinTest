@@ -48,6 +48,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     fun testNiMing() {
         val sumLambda: (Int, Int) -> Int = { x, y -> x + y }
         println(sumLambda(1, 2))
+        println()
     }
 
 
