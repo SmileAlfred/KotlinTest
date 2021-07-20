@@ -2,6 +2,7 @@ package com.example.kotlintest
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.os.Looper
 import android.view.View
 import androidx.core.app.AppLaunchChecker
@@ -41,6 +42,7 @@ class CoroutineTestActivity2 : AppCompatActivity(), View.OnClickListener,
         binding.btnRename.setOnClickListener(this)
         binding.btnCorScope.setOnClickListener(this)
         binding.btnThreadlocalsData.setOnClickListener(this)
+        binding.btnThread.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
@@ -57,8 +59,31 @@ class CoroutineTestActivity2 : AppCompatActivity(), View.OnClickListener,
             binding.btnCorScope -> testCorScope()
             //测试 线程局部数据
             binding.btnThreadlocalsData -> testThreadLocalData()
+            //测试 线程写法
+            binding.btnThread -> testThread()
         }
 
+    }
+
+    /**
+     * 测试线程，默认自动就启动，
+     */
+    private fun testThread() {
+        var i: Int = 1
+        binding.tvCoroutlinJob.append("\n线程开启了嗷～ i = " + i)
+        val threadTest = thread {
+            while (true) {
+                if (i > 99) {
+                    Handler(Looper.getMainLooper()).post {
+                        binding.tvCoroutlinJob.append("\n线程结束～ i = " + i)
+                    }
+                    break
+                }
+                i++
+                Thread.sleep(50)
+            }
+        }
+        binding.tvCoroutlinJob.append("\n线程自己执行去～")
     }
 
     /**
