@@ -36,7 +36,7 @@ class CommonExampleKotlinTest {
         //1。创建一个mock对象
         val file = PowerMockito.mock(File::class.java)
         //2。指定mock对象具体的行为
-        PowerMockito.`when`(file.exists()).thenReturn(true)
+        PowerMockito.`when`(file.exists()).thenReturn(false)
         //3。将mock对象作为参数传递给测试方法，执行测试方法。
         assert(commonExample.callArgumentInstance(file))
     }
@@ -55,7 +55,7 @@ class CommonExampleKotlinTest {
         //3。指定mock对象具体的行为
         PowerMockito.`when`(file.exists()).thenReturn(true)
         //实际上此处该方法 并未成功创建文件，
-        assert(!commonExampleKotlin.callArgumentInstance("fileName"))
+        assert(commonExampleKotlin.callArgumentInstance("fileName"))
 
         val newFile = Mockito.mock(File::class.java)
         val existsNewF = newFile.exists()
